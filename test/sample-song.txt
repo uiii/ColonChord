@@ -1,35 +1,35 @@
 Veď mě dál, cesto má (Pavel Bobek)
 
-:  D             Hmi 
-1. Někde v dálce cesty končí, 
-:  A              G        D 
-   každá prý však cíl svůj skrývá, 
-:                Hmi 
-   někde v dálce každá má svůj cíl, 
-:  A                     G          D 
-   ať je pár mil dlouhá, nebo tisíc mil. 
- 
-:           D          A          Hmi          G 
-Ref: Veď mě dál, cesto má, veď mě dál, vždyť i já 
-:             D                  A             G          D 
-     tam, kde končíš, chtěl bych dojít, veď mě dál, cesto má. 
- 
-2. Chodím dlouho po všech cestách, 
-   všechny znám je, jen ta má mi zbývá, 
-   je jak dívky, co jsem měl tak rád, 
-   plná žáru bývá, hned zas samý chlad. 
+:  D             Hmi
+1. Někde v dálce cesty končí,
+:  A              G        D
+   každá prý však cíl svůj skrývá,
+:                Hmi
+   někde v dálce každá má svůj cíl,
+:  A                     G          D
+   ať je pár mil dlouhá, nebo tisíc mil.
+
+:           D          A          Hmi          G
+Ref: Veď mě dál, cesto má, veď mě dál, vždyť i já
+:             D                  A             G          D
+     tam, kde končíš, chtěl bych dojít, veď mě dál, cesto má.
+
+2. Chodím dlouho po všech cestách,
+   všechny znám je, jen ta má mi zbývá,
+   je jak dívky, co jsem měl tak rád,
+   plná žáru bývá, hned zas samý chlad.
 
 Ref: Veď mě dál ...
- 
-:  Hmi       A         D 
-*: Pak na patník poslední napíšu křídou 
-:  G            D                A 
-   jméno své, a pod něj, že jsem žil hrozně rád, 
-:  Hmi                C 
-   písně své, co mi v kapsách zbydou, 
-:  G             D             A                 A7 
-   dám si bandou cvrčků hrát a půjdu spát, půjdu spát. 
- 
+
+:  Hmi       A         D
+*: Pak na patník poslední napíšu křídou
+:  G            D                A
+   jméno své, a pod něj, že jsem žil hrozně rád,
+:  Hmi                C
+   písně své, co mi v kapsách zbydou,
+:  G             D             A                 A7
+   dám si bandou cvrčků hrát a půjdu spát, půjdu spát.
+
 Ref: Veď mě dál ... 2x
-:              A          D 
+:              A          D
      [: veď mě dál, cesto má :]

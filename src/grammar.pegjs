@@ -3,8 +3,10 @@
 }
 
 song
-    = new_line* header:header_line sections:section+ new_line*
+    = header:header_line sections:section+ new_line*
     {
+        console.log(header);
+        console.log(sections);
         return {
             title: header.title,
             author: header.author,
@@ -13,8 +15,8 @@ song
     }
 
 header_line
-    = title:[^()]+ whitespace* "(" author:[^()]+ ")" whitespace*
-    { 
+    = title:[^()]+ whitespace* "(" author:[^()]+ ")"
+    {
         return {
             title: title.join("").trim(),
             author: author.join("").trim()
@@ -22,111 +24,126 @@ header_line
     }
 
 section
-    = section:(chord_section / lyrics_section)
+    = chord_section
+    / lyrics_section
+
+chord_section
+    = new_line+ section:chord_section_line
     {
         return section;
     }
 
-chord_section
-    = new_line+ "::" chords:chords
+chord_section_line "chord section"
+    = "::" chords:chord+
     {
         return {
             type: "CHORDS",
-            label: "::",
             lines: [
                 {
-                    chords: chords,
-                    lyrics: ""
+                    chords: chords
                 }
             ]
         };
     }
 
 lyrics_section
-    = labeled_line:labeled_line lines:line+
+    = start_line:lyrics_section_start_line lines:lyrics_section_line*
     {
-        if(! lines) {
-            lines = [];
-        }
-        
+        lines.unshift({
+            chords: start_line.chords,
+            lyrics: start_line.lyrics
+        });
+
         return {
-            type: "TODO",
-            label: labeled_line.label,
-            lines: [labeled_line.line].concat(lines)
+            type: "LYRICS", // TODO
+            label: start_line.label,
+            lines: lines
         };
     }
 
-labeled_line
-    = chords:chord_line?
-      new_line+ label:non_empty_char+ lyrics:lyrics
+lyrics_section_start_line
+    = chords:chord_line? lyrics:labeled_lyrics_line
     {
         if(chords) {
-            chords[0].offset -= label.length + lyrics.offset
-
-            if(chords[0].offset < 0) {
-                // TODO error
-            }
-        } else {
-            chords = [];
+            chords[0].offset -= lyrics.offset - 1;
         }
 
         return {
-            label: label.join(""),
-            line: {
-                chords: chords,
-                lyrics: lyrics.lyrics
-            }
+            label: lyrics.label,
+            chords: chords ? chords : [],
+            lyrics: lyrics.text
         };
     }
 
-line
-    = chords:chord_line?
-      new_line+ lyrics:lyrics
+lyrics_section_line
+    = chords:chord_line? lyrics:lyrics_line
     {
         if(chords) {
-            chords[0].offset -= lyrics.offset
-
-            if(chords[0].offset < 0) {
-                // TODO error
-            }
-        } else {
-            chords = [];
+            chords[0].offset -= lyrics.offset - 1;
         }
 
         return {
-            chords: chords,
-            lyrics: lyrics.lyrics
+            chords: chords ? chords : [],
+            lyrics: lyrics.text
         };
     }
 
 chord_line
-    = new_line+ ":" chords:chords whitespace*
+    = new_line+ line:chords
     {
-        return chords;
+        return line;
     }
 
-chords
-    = chords:chord+
+labeled_lyrics_line
+    = new_line+ line:labeled_lyrics
+    {
+        return line;
+    }
+
+lyrics_line
+    = new_line+ line:lyrics
+    {
+        return line;
+    }
+
+chords "chord line"
+    = ":" chords:chord+
     {
         return chords;
     }
 
 chord
-    = offset:whitespace+ name:non_empty_char+
-    {
-        return {
-            offset: offset.length,
-            name: name.join("")
-        };
-    }
-
-lyrics
-    = space:whitespace+ lyrics:text_char+
+    = space:whitespace+ name:non_empty_char+
     {
         return {
             offset: space.length,
-            lyrics: lyrics.join("")
-        };
+            name: name.join("")
+        }
+    }
+
+labeled_lyrics "labeled lyrics line"
+    = label:label lyrics:lyrics
+    {
+        return {
+            label: label,
+            offset: label.length + lyrics.offset,
+            text: lyrics.text
+        }
+    }
+
+lyrics "lyrics line"
+    = space:whitespace+ text:text_char+
+    {
+        return {
+            offset: space.length,
+            text: text.join("")
+        }
+    }
+    
+label
+    = first:[^: \n] rest:non_empty_char+
+    {
+        return first + rest.join("");
     }
 
 text_char
@@ -138,5 +155,5 @@ non_empty_char
 whitespace
     = [ ]
 
-new_line
-    = whitespace* "\n"
+new_line "empty line"
+    = "\n"

@@ -11,9 +11,13 @@ src_dir=src
 peg=./${build_dir}/node_modules/.bin/pegjs
 uglify=./${build_dir}/node_modules/.bin/uglifyjs
 
-debug_files= \
+debug_src_files= \
+	${debug_dir}/Exception.js \
 	${debug_dir}/grammar.js \
-	${debug_dir}/parse.js \
+	${debug_dir}/parse.js
+
+debug_files= \
+	${debug_src_files} \
 	${debug_dir}/ColonChord.js
 
 release_files= \
@@ -61,7 +65,7 @@ ${debug_dir}/%.js: ${src_dir}/%.js
 ${debug_dir}/grammar.js: ${src_dir}/grammar.pegjs
 	${peg} -e 'var grammar' $^ $@
 	
-${debug_dir}/ColonChord.js: ${debug_dir}/grammar.js ${debug_dir}/parse.js
+${debug_dir}/ColonChord.js: ${debug_src_files}
 	@echo "(function(exports) {" > $@
 
 	@for file in $^; do \

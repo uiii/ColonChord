@@ -3,19 +3,19 @@ describe("Sample song parsed by SongParser", function() {
 
     // load sample song
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', "/base/test/unit/sample-song.txt", false);
+    xhr.open('GET', "/base/test/sample-song.txt", false);
     xhr.onload = function() {
         songText = xhr.responseText;
     };
     xhr.send();
 
-    //var ColonChord = require('./build/debug/main.js');
-
     // parse song
     var song = ColonChord.parse(songText);
+
+    console.log(song);
     
     // convert song structure to text
-    var output = "{0} ({1})\n".format(song.title, song.author);
+    var output = song.title + " (" + song.author + ")\n";
 
     _.each(song.sections, function(section) {
         var sectionOutput = "";
@@ -26,18 +26,20 @@ describe("Sample song parsed by SongParser", function() {
             }, "");
 
             if(chordLine) {
-                sectionOutput += ":{0}{1}\n".format(_.str.repeat(" ", section.label.length), chordLine);
+                sectionOutput += ":" + _.str.repeat(" ", section.label.length) + chordLine + "\n";
             }
 
             if(lineNumber === 0) {
-                sectionOutput += "{0} {1}\n".format(section.label, line.lyrics);
+                sectionOutput += section.label + " " + line.lyrics + "\n";
             } else {
-                sectionOutput += "{0} {1}\n".format(_.str.repeat(" ", section.label.length), line.lyrics);
+                sectionOutput += _.str.repeat(" ", section.label.length) + " " + line.lyrics + "\n";
             }
         });
 
-        output += "\n{0}".format(sectionOutput);
+        output += "\n" + sectionOutput;
     });
+
+    console.log(output);
 
     // tests
     it("is equal to this output", function() {
