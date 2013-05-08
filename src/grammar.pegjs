@@ -1,26 +1,65 @@
 {
-    var song = {};
+    function isRoman(roman) {
+        var validator = /^M*(?:D?C{0,3}|C[MD])(?:L?X{0,3}|X[CL])(?:V?I{0,3}|I[XV])$/;
+
+        return roman && validator.test(roman);
+    }
+
+    function romanToDecimal(roman) {
+        if (! isRoman(roman)) {
+            return null;
+        }
+
+        var convertTable = {
+            M:1000, CM:900,
+            D:500, CD:400,
+            C:100, XC:90,
+            L:50, XL:40,
+            X:10, IX:9,
+            V:5, IV:4,
+            I:1
+        };
+
+        var token = /[MDLV]|C[MD]?|X[CL]?|I[XV]?/g;
+        var decimal = 0;
+
+        var match = null;
+        while (match = token.exec(roman)) {
+            decimal += convertTable[match[0]];
+        }
+
+        return decimal;
+    }
 }
 
 song
-    = header:header_line sections:section+ new_line*
+    = header:header_line
+      capo:capo_line?
+      sections:section+ new_line*
     {
         console.log(header);
         console.log(sections);
         return {
             title: header.title,
             author: header.author,
+            capo: capo ? capo : 0,
             sections: sections
         };
     }
 
 header_line
-    = title:[^()]+ whitespace* "(" author:[^()]+ ")"
+    = new_line* title:[^()]+ whitespace* "(" author:[^()]+ ")"
     {
         return {
             title: title.join("").trim(),
             author: author.join("").trim()
         };
+    }
+
+capo_line
+    = new_line+ "capo" whitespace fret_number:(number / roman)
+    {
+        return fret_number;
     }
 
 section
@@ -141,9 +180,21 @@ lyrics "lyrics line"
     }
     
 label
-    = first:[^: \n] rest:non_empty_char+
+    = first:[^: \n] rest:[^\\.\n]* dot:[\\.]
     {
-        return first + rest.join("");
+        return first + rest.join("") + dot;
+    }
+
+number "number"
+    = number:[0-9]+
+    {
+        return parseInt(number.join(""));
+    }
+
+roman "Roman number"
+    = number:[IVXLCM]+ ! { return isRoman(number); }
+    {
+        return romanToDecimal(number.join(""));
     }
 
 text_char
