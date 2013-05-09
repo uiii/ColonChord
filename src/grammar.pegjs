@@ -93,9 +93,12 @@ lyrics_section
             lyrics: start_line.lyrics
         });
 
+        console.log(start_line.label);
+
         return {
-            type: "LYRICS", // TODO
-            label: start_line.label,
+            type: start_line.label.type,
+            label: start_line.label.text,
+            number: start_line.label.number,
             lines: lines
         };
     }
@@ -163,6 +166,8 @@ chord
 labeled_lyrics "labeled lyrics line"
     = label:label lyrics:lyrics
     {
+        console.log("label");
+        console.log(label);
         return {
             label: label,
             offset: label.length + lyrics.offset,
@@ -180,13 +185,70 @@ lyrics "lyrics line"
     }
     
 label
-    = first:[^: \n] rest:[^\\.\n]* dot:[\\.]
+    = verse_label / refrain_label / recitation_label / other_label
+
+verse_label
+    = number:([1-9][0-9]*) "."
     {
-        return first + rest.join("") + dot;
+        return {
+            text: "",
+            number: parseInt(number.join("")),
+            type: 'VERSE',
+            length: number.join("").length + 1
+        };
+    }
+
+refrain_label
+    = text:("Ref"/"Refrain"/"Chorus") number:(whitespace [1-9][0-9]*)? "."
+    {
+        console.log("ref");
+        console.log(number);
+
+        number = number ? number.join("") : "";
+
+        return {
+            text: text,
+            number: number ? parseInt(number) : null,
+            type: 'REFRAIN',
+            length: text.length + number.length + 1
+        };
+    }
+
+recitation_label
+    = text:("Rec"/"Recitation") number:(whitespace [1-9][0-9]*)? "."
+    {
+        number = number ? number.join("") : "";
+
+        return {
+            text: text,
+            number: number ? parseInt(number) : null,
+            type: 'RECITATION',
+            length: text.length + number.length + 1
+        };
+    }
+
+other_label
+    = first:[^: \n] rest:[^\\.\n]* "."
+    {
+        var text = first + rest.join("");
+        var number = null;
+
+        var match = text.match(/^(.+) ([1-9][0-9]*)$/);
+        if(match) {
+            text = match[1];
+            number = parseInt(match[2]);
+        }
+
+        return {
+            text: text,
+            number: number,
+            type: 'OTHER',
+            length: first.length + rest.length + 1
+        };
     }
 
 number "number"
-    = number:[0-9]+
+    = number:([1-9][0-9]*)
     {
         return parseInt(number.join(""));
     }
