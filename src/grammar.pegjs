@@ -1,5 +1,6 @@
 {
     function isRoman(roman) {
+        console.log(["roman", roman]);
         var validator = /^M*(?:D?C{0,3}|C[MD])(?:L?X{0,3}|X[CL])(?:V?I{0,3}|I[XV])$/;
 
         return roman && validator.test(roman);
@@ -30,6 +31,18 @@
 
         return decimal;
     }
+
+    if(! String.prototype.trim) {
+        /**
+         * Trim whitespace from each end of a String
+         * @returns {String} the original String with whitespace removed from each end
+         * @example
+         * ' foo bar    '.trim(); // 'foo bar'
+         */
+        String.prototype.trim = function trim() {
+            return this.toString().replace(/^([\s]*)|([\s]*)$/g, '');
+        };
+    }
 }
 
 song
@@ -37,8 +50,8 @@ song
       capo:capo_line?
       sections:section+ new_line*
     {
-        console.log(header);
-        console.log(sections);
+        //console.log(header);
+        //console.log(sections);
         return {
             title: header.title,
             author: header.author,
@@ -57,7 +70,13 @@ header_line
     }
 
 capo_line
-    = new_line+ "capo" whitespace fret_number:(number / roman)
+    = new_line+ "capo" whitespace fret_number:fret_number
+    {
+        return fret_number;
+    }
+
+fret_number "fret number"
+    =  fret_number:(number / roman) 
     {
         return fret_number;
     }
@@ -75,6 +94,8 @@ chord_section
 chord_section_line "chord section"
     = "::" chords:chord+
     {
+        chords[0].offset -= 1;
+
         return {
             type: "CHORDS",
             lines: [
@@ -93,7 +114,7 @@ lyrics_section
             lyrics: start_line.lyrics
         });
 
-        console.log(start_line.label);
+        //console.log(start_line.label);
 
         return {
             type: start_line.label.type,
@@ -166,8 +187,8 @@ chord
 labeled_lyrics "labeled lyrics line"
     = label:label lyrics:lyrics
     {
-        console.log("label");
-        console.log(label);
+        //console.log("label");
+        //console.log(label);
         return {
             label: label,
             offset: label.length + lyrics.offset,
@@ -201,8 +222,8 @@ verse_label
 refrain_label
     = text:("Ref"/"Refrain"/"Chorus") number:(whitespace [1-9][0-9]*)? "."
     {
-        console.log("ref");
-        console.log(number);
+        //console.log("ref");
+        //console.log(number);
 
         number = number ? number.join("") : "";
 
@@ -254,7 +275,7 @@ number "number"
     }
 
 roman "Roman number"
-    = number:[IVXLCM]+ ! { return isRoman(number); }
+    = number:[IVXLCDM]+
     {
         return romanToDecimal(number.join(""));
     }
@@ -269,4 +290,4 @@ whitespace
     = [ ]
 
 new_line "empty line"
-    = "\n"
+    = whitespace* "\n"

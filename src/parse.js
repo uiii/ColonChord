@@ -17,7 +17,7 @@ function checkTabulators(text) {
 
 function removeEmptyLines(text) {
     return text
-        .replace(/ *\n/g, '\n') // remove line trailing spaces 
+        //.replace(/ *\n/g, '\n') // remove line trailing spaces 
         .replace(/ *$/, "") // remove file trailing spaces
         ;//.replace(/\n(?=\n|$)/g, '\n##EMPTY_LINE##'); // mark empty lines
 }
@@ -25,15 +25,15 @@ function removeEmptyLines(text) {
 exports.parse = function(text) {
     checkTabulators(text);
 
-    console.log(text);
+    //console.log(text);
 
     text = removeEmptyLines(text);
 
-    console.log(text);
+    //console.log(text);
 
     var output = grammar.parse(text);
 
-    console.log(output);
+    //console.log(output);
 
     return output;
 }
